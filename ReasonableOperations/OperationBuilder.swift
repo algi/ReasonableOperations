@@ -10,8 +10,6 @@ import UIKit
 
 class OperationBuilder: NSObject {
 
-    public var done = false
-
     private let internalQueue = OperationQueue()
     private var plainOperations = [PlainOperation]()
 
@@ -47,7 +45,7 @@ class OperationBuilder: NSObject {
     private func customBlockOperationDidFinish() {
 
         if plainOperations.count == 0 {
-            builderFinished()
+            builderDidFinish()
             return
         }
 
@@ -66,7 +64,7 @@ class OperationBuilder: NSObject {
                     dependency = resultValue
 
                 case .Failure(let error):
-                    builderFinished(error: error)
+                    builderDidFinish(error: error)
                     return
             }
         }
@@ -79,9 +77,7 @@ class OperationBuilder: NSObject {
         internalQueue.addOperation(newOperation)
     }
 
-    private func builderFinished(error: NSError? = nil) {
-        done = true
-
+    private func builderDidFinish(error: NSError? = nil) {
         if let builderObserver = observer {
             DispatchQueue.main.async {
                 builderObserver.operationsFinishedWithError(error)
