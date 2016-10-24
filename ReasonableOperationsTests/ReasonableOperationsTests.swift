@@ -62,12 +62,23 @@ class TestProducerOperation: ProducerOperation {
         self.result = result
     }
 
-    func execute() {
-        // noop
+    func execute() throws {
+        switch result {
+            case .Failure(let error):
+                throw error
+            default:
+                break
+        }
     }
 
-    func operationResult() -> OperationResult {
-        return result
+    func operationResult() -> NSObject {
+        switch result {
+            case .Success(let value):
+                return value
+            default:
+                XCTFail("ProducerOperation should not be asked for result, if execute() throws an exception.")
+                return "" as NSObject
+        }
     }
 }
 
@@ -94,4 +105,11 @@ class TestConsumerOperation: ConsumerOperation {
                 XCTAssertNil(actualResult, "Expected error, but got result.")
         }
     }
+}
+
+enum OperationResult {
+
+    case Success(NSObject)
+    case Failure(NSError)
+
 }

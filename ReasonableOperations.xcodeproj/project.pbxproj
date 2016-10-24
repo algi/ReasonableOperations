@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		568990A01DBE11440091030D /* PublicProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5689909F1DBE11440091030D /* PublicProtocols.swift */; };
 		569643991DBD59EB0057B3A6 /* ReasonableOperations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5696438F1DBD59EB0057B3A6 /* ReasonableOperations.framework */; };
 		5696439E1DBD59EB0057B3A6 /* ReasonableOperationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5696439D1DBD59EB0057B3A6 /* ReasonableOperationsTests.swift */; };
 		569643A01DBD59EB0057B3A6 /* ReasonableOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 569643921DBD59EB0057B3A6 /* ReasonableOperations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -24,6 +25,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5689909F1DBE11440091030D /* PublicProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PublicProtocols.swift; path = ../PublicProtocols.swift; sourceTree = "<group>"; };
 		5696438F1DBD59EB0057B3A6 /* ReasonableOperations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReasonableOperations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		569643921DBD59EB0057B3A6 /* ReasonableOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReasonableOperations.h; sourceTree = "<group>"; };
 		569643931DBD59EB0057B3A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 			children = (
 				569643921DBD59EB0057B3A6 /* ReasonableOperations.h */,
 				569643931DBD59EB0057B3A6 /* Info.plist */,
+				5689909F1DBE11440091030D /* PublicProtocols.swift */,
 				569643A91DBD5A0C0057B3A6 /* OperationBuilder.swift */,
 			);
 			path = ReasonableOperations;
@@ -200,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				568990A01DBE11440091030D /* PublicProtocols.swift in Sources */,
 				569643AA1DBD5A0C0057B3A6 /* OperationBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +408,7 @@
 				569643A51DBD59EB0057B3A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		569643A61DBD59EB0057B3A6 /* Build configuration list for PBXNativeTarget "ReasonableOperationsTests" */ = {
 			isa = XCConfigurationList;
@@ -412,6 +417,7 @@
 				569643A81DBD59EB0057B3A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -6,12 +6,12 @@
 //  Copyright © 2016 Marian Bouček. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 class OperationBuilder: NSObject {
 
     private let internalQueue = OperationQueue()
-    private var plainOperations = [PlainOperation]()
+    private var plainOperations = [BasicOperation]()
 
     private var currrentOperation: CustomBlockOperation?
     private var observer: OperationBuilderObserver?
@@ -20,7 +20,7 @@ class OperationBuilder: NSObject {
         self.observer = observer
     }
 
-    func add(_ operation: PlainOperation) -> Self {
+    func add(_ operation: BasicOperation) -> Self {
         plainOperations.append(operation)
         return self
     }
@@ -49,24 +49,23 @@ class OperationBuilder: NSObject {
             return
         }
 
-        guard let currrentOperation = currrentOperation else {
+        guard let currentOperation = currrentOperation else {
             assertionFailure("No current operation assigned.")
+            return
+        }
+
+        guard let operationResult = currentOperation.operationResult else {
+            assertionFailure("No operation result from current operation: \(currentOperation)")
             return
         }
 
         var dependency: NSObject?
 
-        if let producer = currrentOperation.plainOperation as? ProducerOperation {
-
-            switch producer.operationResult() {
-
-                case .Success(let resultValue):
-                    dependency = resultValue
-
-                case .Failure(let error):
-                    builderDidFinish(error: error)
-                    return
-            }
+        switch operationResult {
+            case .Success(let resultValue):
+                dependency = resultValue
+            case .Failure(let error):
+                builderDidFinish(error: error)
         }
 
         let newOperation = CustomBlockOperation(plainOperation: plainOperations.removeFirst(), previousResult: dependency)
@@ -87,12 +86,12 @@ class OperationBuilder: NSObject {
 
     private class CustomBlockOperation: Operation {
 
-        let plainOperation: PlainOperation
+        let plainOperation: BasicOperation
 
         var operationResult: OperationResult?
         var previousResult: NSObject?
 
-        init(plainOperation: PlainOperation, previousResult: NSObject? = nil) {
+        init(plainOperation: BasicOperation, previousResult: NSObject? = nil) {
             self.plainOperation = plainOperation
             self.previousResult = previousResult
         }
@@ -109,49 +108,26 @@ class OperationBuilder: NSObject {
                 consumerOperation.consume(dependency: previousResult)
             }
 
-            plainOperation.execute()
+            do {
+                try plainOperation.execute()
 
-            if let producerOperation = plainOperation as? ProducerOperation {
-                operationResult = producerOperation.operationResult()
+                if let producerOperation = plainOperation as? ProducerOperation {
+                    operationResult = .Success(producerOperation.operationResult())
+                }
+                else {
+                    operationResult = .Success(nil)
+                }
             }
-            else {
-                operationResult = .Success("" as NSObject)
+            catch (let error as NSError) {
+                operationResult = .Failure(error)
             }
         }
     }
-}
 
-// #MARK: - Observers -
+    private enum OperationResult {
 
-protocol OperationBuilderObserver {
+        case Success(NSObject?)
+        case Failure(NSError)
 
-    func operationsFinishedWithError(_ error: NSError?)
-
-}
-
-// #MARK: - Public API -
-
-protocol PlainOperation {
-
-    func execute()
-
-}
-
-enum OperationResult {
-
-    case Success(NSObject)
-    case Failure(NSError)
-
-}
-
-protocol ProducerOperation: PlainOperation {
-
-    func operationResult() -> OperationResult
-
-}
-
-protocol ConsumerOperation: PlainOperation {
-
-    func consume(dependency: NSObject)
-
+    }
 }
