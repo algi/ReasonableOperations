@@ -60,7 +60,7 @@ class FetchImageOperation: ProducerOperation {
     }
 
     func operationResult() -> OperationResult {
-        return .Success("Image from hell!")
+        return .Success("Image from hell!" as AnyObject)
     }
 }
 
@@ -68,8 +68,8 @@ class SaveImageOperation: ConsumerOperation {
 
     var dependencyFromFetchOperation: String?
 
-    func consume(dependency: String) {
-        self.dependencyFromFetchOperation = dependency
+    func consume(dependency: AnyObject) {
+        self.dependencyFromFetchOperation = dependency as? String
     }
 
     func execute() {

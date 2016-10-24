@@ -28,7 +28,7 @@ class OperationBuilder: NSObject {
     func start() {
 
         guard plainOperations.count > 0 else {
-            print(">> Unable to run empty queue...")
+            assertionFailure("Unable to run empty queue!")
             return
         }
 
@@ -54,7 +54,7 @@ class OperationBuilder: NSObject {
             return
         }
 
-        var dependency: String?
+        var dependency: AnyObject?
 
         if let producer = currrentOperation.plainOperation as? ProducerOperation {
 
@@ -90,9 +90,9 @@ class OperationBuilder: NSObject {
         let plainOperation: PlainOperation
 
         var operationResult: OperationResult?
-        var previousResult: String?
+        var previousResult: AnyObject?
 
-        init(plainOperation: PlainOperation, previousResult: String? = nil) {
+        init(plainOperation: PlainOperation, previousResult: AnyObject? = nil) {
             self.plainOperation = plainOperation
             self.previousResult = previousResult
         }
@@ -115,7 +115,7 @@ class OperationBuilder: NSObject {
                 operationResult = producerOperation.operationResult()
             }
             else {
-                operationResult = .Success("")
+                operationResult = .Success("" as AnyObject)
             }
         }
     }
@@ -139,7 +139,7 @@ protocol PlainOperation {
 
 enum OperationResult {
 
-    case Success(String) // TODO: generics (?)
+    case Success(AnyObject)
     case Failure(NSError)
 
 }
@@ -152,6 +152,6 @@ protocol ProducerOperation: PlainOperation {
 
 protocol ConsumerOperation: PlainOperation {
 
-    func consume(dependency: String) // TODO: generics (?)
+    func consume(dependency: AnyObject)
 
 }
