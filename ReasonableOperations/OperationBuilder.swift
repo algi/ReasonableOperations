@@ -83,51 +83,51 @@ class OperationBuilder: NSObject {
             }
         }
     }
+}
 
-    private class CustomBlockOperation: Operation {
+private class CustomBlockOperation<DependencyType>: Operation {
 
-        let plainOperation: BasicOperation
+    let plainOperation: BasicOperation
 
-        var operationResult: OperationResult?
-        var previousResult: NSObject?
+    var operationResult: OperationResult?
+    var previousResult: DependencyType?
 
-        init(plainOperation: BasicOperation, previousResult: NSObject? = nil) {
-            self.plainOperation = plainOperation
-            self.previousResult = previousResult
-        }
-
-        private override func main() {
-
-            if let consumerOperation = plainOperation as? ConsumerOperation {
-
-                guard let previousResult = previousResult else {
-                    assertionFailure(">> Unable to satisfy dependencies for operation: \(plainOperation)")
-                    return
-                }
-
-                consumerOperation.consume(dependency: previousResult)
-            }
-
-            do {
-                try plainOperation.execute()
-
-                if let producerOperation = plainOperation as? ProducerOperation {
-                    operationResult = .Success(producerOperation.operationResult())
-                }
-                else {
-                    operationResult = .Success(nil)
-                }
-            }
-            catch (let error as NSError) {
-                operationResult = .Failure(error)
-            }
-        }
+    init(plainOperation: BasicOperation, previousResult: DependencyType? = nil) {
+        self.plainOperation = plainOperation
+        self.previousResult = previousResult
     }
 
-    private enum OperationResult {
+    private override func main() {
 
-        case Success(NSObject?)
-        case Failure(NSError)
+        if let consumerOperation = plainOperation as? ConsumerOperation {
 
+            guard let previousResult = previousResult else {
+                assertionFailure(">> Unable to satisfy dependencies for operation: \(plainOperation)")
+                return
+            }
+
+            consumerOperation.consume(dependency: previousResult)
+        }
+
+        do {
+            try plainOperation.execute()
+
+            if let producerOperation = plainOperation as? ProducerOperation {
+                operationResult = .Success(producerOperation.operationResult())
+            }
+            else {
+                operationResult = .Success(nil)
+            }
+        }
+        catch (let error as NSError) {
+            operationResult = .Failure(error)
+        }
     }
+}
+
+private enum OperationResult {
+
+    case Success(NSObject?)
+    case Failure(NSError)
+
 }

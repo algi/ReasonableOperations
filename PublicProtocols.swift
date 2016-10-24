@@ -22,7 +22,9 @@ protocol BasicOperation {
  */
 protocol ProducerOperation: BasicOperation {
 
-    func operationResult() -> NSObject
+    associatedtype DependencyType: Any
+
+    func operationResult() -> DependencyType
 
 }
 
@@ -31,7 +33,9 @@ protocol ProducerOperation: BasicOperation {
  */
 protocol ConsumerOperation: BasicOperation {
 
-    func consume(dependency: NSObject)
+    associatedtype DependencyType: Any
+
+    func consume(dependency: DependencyType)
     
 }
 

@@ -16,7 +16,7 @@ class ReasonableOperationsTests: XCTestCase {
     func testSimpleScenario() {
 
         let executionExpectation = expectation(description: "Expectation for all operations")
-        let expectedResult = OperationResult.Success("Successful object" as NSObject)
+        let expectedResult = OperationResult.Success("Successful object")
 
         let builder = OperationBuilder(observer: TestObserver(expectation: executionExpectation))
 
@@ -56,6 +56,8 @@ class TestObserver: OperationBuilderObserver {
 
 class TestProducerOperation: ProducerOperation {
 
+    typealias DependencyType = String
+
     let result: OperationResult
 
     init(result: OperationResult) {
@@ -71,20 +73,22 @@ class TestProducerOperation: ProducerOperation {
         }
     }
 
-    func operationResult() -> NSObject {
+    func operationResult() -> String {
         switch result {
             case .Success(let value):
                 return value
             default:
                 XCTFail("ProducerOperation should not be asked for result, if execute() throws an exception.")
-                return "" as NSObject
+                return ""
         }
     }
 }
 
 class TestConsumerOperation: ConsumerOperation {
 
-    var actualResult: NSObject?
+    typealias DependencyType = String
+
+    var actualResult: String?
 
     let expectedResult: OperationResult
 
@@ -92,7 +96,7 @@ class TestConsumerOperation: ConsumerOperation {
         self.expectedResult = expectedResult
     }
 
-    func consume(dependency: NSObject) {
+    func consume(dependency: String) {
         self.actualResult = dependency
     }
 
@@ -109,7 +113,7 @@ class TestConsumerOperation: ConsumerOperation {
 
 enum OperationResult {
 
-    case Success(NSObject)
+    case Success(String)
     case Failure(NSError)
 
 }
