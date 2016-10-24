@@ -11,15 +11,18 @@ import XCTest
 
 class ReasonableOperationsTests: XCTestCase {
 
+    // TODO: create another scenario with real use case (Fetch image from internet, save in CoreData)
+
     func testSimpleScenario() {
 
         let executionExpectation = expectation(description: "Expectation for all operations")
+        let expectedResult = OperationResult.Success("Successful object" as NSObject)
 
         let builder = OperationBuilder(observer: TestObserver(expectation: executionExpectation))
 
         builder
-            .add(FetchImageOperation())
-            .add(SaveImageOperation())
+            .add(TestProducerOperation(result: expectedResult))
+            .add(TestConsumerOperation(expectedResult: expectedResult))
             .start()
 
         waitForExpectations(timeout: 5) {
@@ -30,6 +33,8 @@ class ReasonableOperationsTests: XCTestCase {
         }
     }
 }
+
+// #MARK: - Test implementations -
 
 class TestObserver: OperationBuilderObserver {
 
@@ -49,36 +54,44 @@ class TestObserver: OperationBuilderObserver {
     }
 }
 
-// TODO: create another scenario with real use case (Fetch image from internet, save in CoreData)
+class TestProducerOperation: ProducerOperation {
 
-// #MARK: - Example operations -
+    let result: OperationResult
 
-class FetchImageOperation: ProducerOperation {
+    init(result: OperationResult) {
+        self.result = result
+    }
 
     func execute() {
-        print(">> FetchDataOperation finished")
+        // noop
     }
 
     func operationResult() -> OperationResult {
-        return .Success("Image from hell!" as AnyObject)
+        return result
     }
 }
 
-class SaveImageOperation: ConsumerOperation {
+class TestConsumerOperation: ConsumerOperation {
 
-    var dependencyFromFetchOperation: String?
+    var actualResult: NSObject?
 
-    func consume(dependency: AnyObject) {
-        self.dependencyFromFetchOperation = dependency as? String
+    let expectedResult: OperationResult
+
+    init(expectedResult: OperationResult) {
+        self.expectedResult = expectedResult
+    }
+
+    func consume(dependency: NSObject) {
+        self.actualResult = dependency
     }
 
     func execute() {
+        switch expectedResult {
+            case .Success(let expectedValue):
+                XCTAssertEqual(actualResult, expectedValue, "Actual and expected result doesn't match.")
 
-        guard let dependencyFromFetchOperation = dependencyFromFetchOperation else {
-            assertionFailure(">> Unable to run operation without dependency from first operation.")
-            return
+            case .Failure:
+                XCTAssertNil(actualResult, "Expected error, but got result.")
         }
-
-        print(">> SaveImageOperation finished with: \(dependencyFromFetchOperation)")
     }
 }

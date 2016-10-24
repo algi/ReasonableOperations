@@ -54,7 +54,7 @@ class OperationBuilder: NSObject {
             return
         }
 
-        var dependency: AnyObject?
+        var dependency: NSObject?
 
         if let producer = currrentOperation.plainOperation as? ProducerOperation {
 
@@ -90,9 +90,9 @@ class OperationBuilder: NSObject {
         let plainOperation: PlainOperation
 
         var operationResult: OperationResult?
-        var previousResult: AnyObject?
+        var previousResult: NSObject?
 
-        init(plainOperation: PlainOperation, previousResult: AnyObject? = nil) {
+        init(plainOperation: PlainOperation, previousResult: NSObject? = nil) {
             self.plainOperation = plainOperation
             self.previousResult = previousResult
         }
@@ -115,7 +115,7 @@ class OperationBuilder: NSObject {
                 operationResult = producerOperation.operationResult()
             }
             else {
-                operationResult = .Success("" as AnyObject)
+                operationResult = .Success("" as NSObject)
             }
         }
     }
@@ -139,7 +139,7 @@ protocol PlainOperation {
 
 enum OperationResult {
 
-    case Success(AnyObject)
+    case Success(NSObject)
     case Failure(NSError)
 
 }
@@ -152,6 +152,6 @@ protocol ProducerOperation: PlainOperation {
 
 protocol ConsumerOperation: PlainOperation {
 
-    func consume(dependency: AnyObject)
+    func consume(dependency: NSObject)
 
 }
