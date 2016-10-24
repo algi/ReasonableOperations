@@ -85,21 +85,21 @@ class OperationBuilder: NSObject {
     }
 }
 
-private class CustomBlockOperation<DependencyType>: Operation {
+private class CustomBlockOperation: Operation {
 
     let plainOperation: BasicOperation
 
     var operationResult: OperationResult?
-    var previousResult: DependencyType?
+    var previousResult: NSObject?
 
-    init(plainOperation: BasicOperation, previousResult: DependencyType? = nil) {
+    init(plainOperation: BasicOperation, previousResult: NSObject? = nil) {
         self.plainOperation = plainOperation
         self.previousResult = previousResult
     }
 
     private override func main() {
 
-        if let consumerOperation = plainOperation as? ConsumerOperation {
+        if let consumerOperation = plainOperation as? Blbost {
 
             guard let previousResult = previousResult else {
                 assertionFailure(">> Unable to satisfy dependencies for operation: \(plainOperation)")
@@ -112,7 +112,7 @@ private class CustomBlockOperation<DependencyType>: Operation {
         do {
             try plainOperation.execute()
 
-            if let producerOperation = plainOperation as? ProducerOperation {
+            if let producerOperation = plainOperation as? Kravina {
                 operationResult = .Success(producerOperation.operationResult())
             }
             else {
@@ -122,6 +122,29 @@ private class CustomBlockOperation<DependencyType>: Operation {
         catch (let error as NSError) {
             operationResult = .Failure(error)
         }
+    }
+}
+
+private class Blbost: ConsumerOperation {
+
+    fileprivate typealias DependencyType = NSObject
+
+    fileprivate func execute() throws {
+    }
+
+    fileprivate func consume(dependency: NSObject) {
+    }
+}
+
+private class Kravina: ProducerOperation {
+
+    fileprivate typealias DependencyType = NSObject
+
+    fileprivate func execute() throws {
+    }
+
+    fileprivate func operationResult() -> NSObject {
+        return "" as NSObject
     }
 }
 
