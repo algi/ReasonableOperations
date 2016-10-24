@@ -82,8 +82,11 @@ class OperationBuilder: NSObject {
     private func builderFinished(error: NSError? = nil) {
         done = true
 
-        // TODO: main thread (?)
-        observer?.operationsFinishedWithError(error)
+        if let builderObserver = observer {
+            DispatchQueue.main.async {
+                builderObserver.operationsFinishedWithError(error)
+            }
+        }
     }
 
     private class CustomBlockOperation: Operation {
