@@ -73,7 +73,7 @@ class TestProducerOperation: ProducerOperation {
         }
     }
 
-    func operationResult() -> String {
+    func operationResult() -> Any {
         switch result {
             case .Success(let value):
                 return value
@@ -86,8 +86,6 @@ class TestProducerOperation: ProducerOperation {
 
 class TestConsumerOperation: ConsumerOperation {
 
-    typealias DependencyType = String
-
     var actualResult: String?
 
     let expectedResult: OperationResult
@@ -96,8 +94,8 @@ class TestConsumerOperation: ConsumerOperation {
         self.expectedResult = expectedResult
     }
 
-    func consume(dependency: String) {
-        self.actualResult = dependency
+    func consume(dependency: Any) {
+        self.actualResult = dependency as? String
     }
 
     func execute() {

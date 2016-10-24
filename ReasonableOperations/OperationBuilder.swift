@@ -59,7 +59,7 @@ class OperationBuilder: NSObject {
             return
         }
 
-        var dependency: NSObject?
+        var dependency: Any?
 
         switch operationResult {
             case .Success(let resultValue):
@@ -90,16 +90,16 @@ private class CustomBlockOperation: Operation {
     let plainOperation: BasicOperation
 
     var operationResult: OperationResult?
-    var previousResult: NSObject?
+    var previousResult: Any?
 
-    init(plainOperation: BasicOperation, previousResult: NSObject? = nil) {
+    init(plainOperation: BasicOperation, previousResult: Any? = nil) {
         self.plainOperation = plainOperation
         self.previousResult = previousResult
     }
 
     private override func main() {
 
-        if let consumerOperation = plainOperation as? Blbost {
+        if let consumerOperation = plainOperation as? ConsumerOperation {
 
             guard let previousResult = previousResult else {
                 assertionFailure(">> Unable to satisfy dependencies for operation: \(plainOperation)")
@@ -112,7 +112,7 @@ private class CustomBlockOperation: Operation {
         do {
             try plainOperation.execute()
 
-            if let producerOperation = plainOperation as? Kravina {
+            if let producerOperation = plainOperation as? ProducerOperation {
                 operationResult = .Success(producerOperation.operationResult())
             }
             else {
@@ -125,32 +125,9 @@ private class CustomBlockOperation: Operation {
     }
 }
 
-private class Blbost: ConsumerOperation {
-
-    fileprivate typealias DependencyType = NSObject
-
-    fileprivate func execute() throws {
-    }
-
-    fileprivate func consume(dependency: NSObject) {
-    }
-}
-
-private class Kravina: ProducerOperation {
-
-    fileprivate typealias DependencyType = NSObject
-
-    fileprivate func execute() throws {
-    }
-
-    fileprivate func operationResult() -> NSObject {
-        return "" as NSObject
-    }
-}
-
 private enum OperationResult {
 
-    case Success(NSObject?)
+    case Success(Any?)
     case Failure(NSError)
 
 }
